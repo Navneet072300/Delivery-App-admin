@@ -3,13 +3,13 @@ import { Store } from "@/type-db";
 import { auth } from "@clerk/nextjs/server";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { redirect } from "next/navigation";
-import React from "react";
 
-interface SetupLayoutProps {
+interface DashboardLayoutProps {
   children: React.ReactNode;
+  params: { storeId: string };
 }
 
-const layout = async ({ children }: SetupLayoutProps) => {
+const DashboardLayout = async ({ children, params }: DashboardLayoutProps) => {
   const { userId } = auth();
 
   if (!userId) {
@@ -17,21 +17,28 @@ const layout = async ({ children }: SetupLayoutProps) => {
   }
 
   const storeSnap = await getDocs(
-    query(collection(db, "stores"), where("userId", "==", userId))
+    query(
+      collection(db, "stores"),
+      where("userId", "==", userId),
+      where("id", "==", params.storeId)
+    )
   );
 
-  let store = null as any;
-
+  let store;
   storeSnap.forEach((doc) => {
     store = doc.data() as Store;
-    return;
   });
 
-  if (store) {
-    redirect(`/${store?.id}`);
+  if (!store) {
+    redirect("/");
   }
 
-  return <div>{children}</div>;
+  return (
+    <>
+      This is the Navbar
+      {children}
+    </>
+  );
 };
 
-export default layout;
+export default DashboardLayout;
