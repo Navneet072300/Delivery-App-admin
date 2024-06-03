@@ -1,3 +1,4 @@
+import Navbar from "@/components/Navbar";
 import { db } from "@/lib/firebase";
 import { Store } from "@/type-db";
 import { auth } from "@clerk/nextjs/server";
@@ -35,7 +36,7 @@ const DashboardLayout = async ({ children, params }: DashboardLayoutProps) => {
 
   return (
     <>
-      This is the Navbar
+      <Navbar />
       {children}
     </>
   );
