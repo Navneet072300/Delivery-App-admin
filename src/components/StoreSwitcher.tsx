@@ -19,6 +19,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
+import StoreListItem from "./StoreListItem";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -43,7 +44,9 @@ export const StoreSwitcher = ({ items }: StoreSwitcherPorps) => {
 
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filtered, setFiltered] = useState<{label: string, value: string}[]>([]);
+  const [filtered, setFiltered] = useState<{ label: string; value: number }[]>(
+    []
+  );
 
   const onStoreSelect = (store: { value: string; label: string }) => {
     setOpen(false);
@@ -53,8 +56,10 @@ export const StoreSwitcher = ({ items }: StoreSwitcherPorps) => {
   const handleSearchTerm = (e: any) => {
     setSearchTerm(e.target.value);
     setFiltered(
-      formattedStores.filter(item => item.label.toLowerCase().includes(searchTerm.toLowerCase()))
-    )
+      formattedStores.filter((item) =>
+        item.label.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
   };
 
   return (
@@ -89,9 +94,27 @@ export const StoreSwitcher = ({ items }: StoreSwitcherPorps) => {
             </div>
             <CommandList>
               <CommandGroup heading="Stores">
-                {formattedStores?.map((store) => (
-                  
-                ))}
+                {searchTerm === "" ? (
+                  formattedStores.map((item, i) => (
+                    <StoreListItem
+                      store={item}
+                      key={i}
+                      onSelect={onStoreSelect}
+                      isChecked={currentStore?.value == item.value}
+                    />
+                  ))
+                ) : filtered.length > 0 ? (
+                  filtered.map((item, i) => (
+                    <StoreListItem
+                      store={item}
+                      key={i}
+                      onSelect={onStoreSelect}
+                      isChecked={currentStore?.value == item.value}
+                    />
+                  ))
+                ) : (
+                  <CommandEmpty>No Store Found</CommandEmpty>
+                )}
               </CommandGroup>
             </CommandList>
           </Command>
