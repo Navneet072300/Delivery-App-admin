@@ -9,17 +9,16 @@ import { Store } from "@/type-db";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown, StoreIcon } from "lucide-react";
+import { ChevronsUpDown, StoreIcon } from "lucide-react";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
-  CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { cn } from "@/lib/utils";
 import StoreListItem from "./StoreListItem";
+import { useStoreModel } from "@/hooks/user-store-model";
+import CreateStoreItem from "./CreateStoreItem";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -32,19 +31,20 @@ interface StoreSwitcherPorps extends PopoverTriggerProps {
 export const StoreSwitcher = ({ items }: StoreSwitcherPorps) => {
   const params = useParams();
   const router = useRouter();
+  const storeModal = useStoreModel();
 
   const formattedStores = items?.map((item) => ({
     label: item.name,
-    value: item.id,
+    value: item.id as any,
   }));
 
   const currentStore = formattedStores?.find(
-    (item) => item.value === Number(params.storeId)
+    (item) => item.value === params.storeId
   );
 
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filtered, setFiltered] = useState<{ label: string; value: number }[]>(
+  const [filtered, setFiltered] = useState<{ label: string; value: string }[]>(
     []
   );
 
@@ -117,6 +117,14 @@ export const StoreSwitcher = ({ items }: StoreSwitcherPorps) => {
                 )}
               </CommandGroup>
             </CommandList>
+            <CommandGroup>
+              <CreateStoreItem
+                onClick={() => {
+                  setOpen(false);
+                  storeModal.onOpen();
+                }}
+              />
+            </CommandGroup>
           </Command>
         </PopoverContent>
       </Popover>
