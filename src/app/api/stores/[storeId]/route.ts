@@ -1,20 +1,12 @@
 import { db } from "@/lib/firebase";
 import { Store } from "@/type-db";
 import { auth } from "@clerk/nextjs/server";
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  serverTimestamp,
-  updateDoc,
-} from "firebase/firestore";
+import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { storedId: string } }
+  { params }: { params: { storeId: string } }
 ) => {
   try {
     const { userId } = auth();
@@ -23,7 +15,7 @@ export const PATCH = async (
     if (!userId) {
       return new NextResponse("Un-Authorized", { status: 400 });
     }
-    if (!params.storedId) {
+    if (!params.storeId) {
       return new NextResponse("Store Id is Required", { status: 400 });
     }
 
@@ -33,7 +25,7 @@ export const PATCH = async (
       return new NextResponse("Store name is missing", { status: 400 });
     }
 
-    const docRef = doc(db, "stores", params.storedId);
+    const docRef = doc(db, "stores", params.storeId);
     await updateDoc(docRef, { name });
     const store = (await getDoc(docRef)).data() as Store;
 
@@ -48,7 +40,7 @@ export const PATCH = async (
 
 export const DELETE = async (
   req: Request,
-  { params }: { params: { storedId: string } }
+  { params }: { params: { storeId: string } }
 ) => {
   try {
     const { userId } = auth();
@@ -56,11 +48,11 @@ export const DELETE = async (
     if (!userId) {
       return new NextResponse("Un-Authorized", { status: 400 });
     }
-    if (!params.storedId) {
+    if (!params.storeId) {
       return new NextResponse("Store Id is Required", { status: 400 });
     }
 
-    const docRef = doc(db, "stores", params.storedId);
+    const docRef = doc(db, "stores", params.storeId);
 
     //TODO: delete all the subcollections and along with those data file urls
 

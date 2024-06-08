@@ -1,6 +1,7 @@
 "use client";
 
 import Heading from "@/components/Heading";
+import AlertModal from "@/components/modal/alert-modal";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -39,6 +40,7 @@ const SettingForm = ({ initialData }: SettingFormProps) => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const params = useParams();
   const router = useRouter();
 
@@ -47,7 +49,7 @@ const SettingForm = ({ initialData }: SettingFormProps) => {
       setIsLoading(true);
       const response = await axios.patch(`/api/stores/${params.storeId}`, data);
       toast.success("Store Updated");
-      window.location.assign(`/${response.data.id}`);
+      router.refresh();
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
@@ -55,11 +57,35 @@ const SettingForm = ({ initialData }: SettingFormProps) => {
     }
   };
 
+  const onDelete = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.delete(`/api/stores/${params.storeId}`);
+      toast.success("Store Removed");
+      router.push("/");
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setIsLoading(false);
+      setOpen(false);
+    }
+  };
+
   return (
     <>
+      <AlertModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={onDelete}
+        loading={isLoading}
+      />
       <div className=" flex items-center justify-center">
         <Heading title="Settings" description=" Manage Store Preferences" />
-        <Button variant={"destructive"} size={"icon"} onClick={() => {}}>
+        <Button
+          variant={"destructive"}
+          size={"icon"}
+          onClick={() => setOpen(true)}
+        >
           <Trash className=" h-4 w-4" />
         </Button>
       </div>
