@@ -1,10 +1,10 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Link } from "lucide-react";
+import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
-const MainNav = ({
+export const MainNav = ({
   className,
   ...props
 }: React.HtmlHTMLAttributes<HTMLElement>) => {
@@ -13,14 +13,18 @@ const MainNav = ({
 
   const routes = [
     {
-      href: ` /${params.storeId}/settings `,
+      href: `/${params.storeId}/settings`,
       label: "Settings",
       active: pathname === `/${params.storeId}/settings`,
     },
   ];
 
   return (
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6 pl-6")}>
+    <nav
+      className={cn(
+        "flex items-center space-x-4 lg:space-x-6 pl-6 cursor-pointer"
+      )}
+    >
       {routes.map((route) => (
         <Link
           key={route.href}
@@ -38,5 +42,3 @@ const MainNav = ({
     </nav>
   );
 };
-
-export default MainNav;

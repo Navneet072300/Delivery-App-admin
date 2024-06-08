@@ -1,11 +1,11 @@
 import { UserButton } from "@clerk/nextjs";
-import MainNav from "./MainNav";
 import { StoreSwitcher } from "./StoreSwitcher";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Store } from "@/type-db";
+import { MainNav } from "./MainNav";
 
 const Navbar = async () => {
   const { userId } = auth();
