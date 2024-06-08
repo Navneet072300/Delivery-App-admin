@@ -1,5 +1,6 @@
 "use client";
 
+import { ApiAlert } from "@/components/ApiAlert";
 import Heading from "@/components/Heading";
 import AlertModal from "@/components/modal/alert-modal";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useOrigin } from "@/hooks/use-origin";
 import { Store } from "@/type-db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -43,6 +45,7 @@ const SettingForm = ({ initialData }: SettingFormProps) => {
   const [open, setOpen] = useState(false);
   const params = useParams();
   const router = useRouter();
+  const origin = useOrigin();
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
@@ -122,6 +125,13 @@ const SettingForm = ({ initialData }: SettingFormProps) => {
           </Button>
         </form>
       </Form>
+
+      <Separator />
+      <ApiAlert
+        title="NEXT_PUBLIC_API_URL"
+        description={`${origin}/api/${params.storeId}`}
+        variant="public"
+      />
     </>
   );
 };
