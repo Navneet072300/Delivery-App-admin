@@ -52,9 +52,13 @@ const BillboardForm = ({ initialData }: BillboardFormProps) => {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
-      const response = await axios.patch(`/api/stores/${params.storeId}`, data);
-      toast.success("Store Updated");
+      if (initialData) {
+      } else {
+        await axios.post(`/api/${params.storeId}/billboards`, data);
+      }
+      toast.success(toastMessage);
       router.refresh();
+      router.push(`/${params.storeId}/billboards`);
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
