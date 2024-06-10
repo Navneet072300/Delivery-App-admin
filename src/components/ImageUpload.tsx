@@ -1,6 +1,6 @@
 "use client";
 
-import { ImagePlus } from "lucide-react";
+import { ImagePlus, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { PuffLoader } from "react-spinners";
@@ -9,9 +9,11 @@ import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
+  deleteObject,
 } from "firebase/storage";
 import { storage } from "@/lib/firebase";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 interface ImageUploadProps {
   disabled?: boolean;
@@ -65,6 +67,13 @@ const ImageUpload = ({
     );
   };
 
+  const onDelete = (url: string) => {
+    onRemove(url);
+    deleteObject(ref(storage, url)).then(() => {
+      toast.success("Image Removed");
+    });
+  };
+
   return (
     <div>
       {value && value.length > 0 ? (
@@ -81,6 +90,16 @@ const ImageUpload = ({
                   alt="Billboard Image"
                   src={url}
                 />
+                <div className=" absolute z-10 top-2 right-2">
+                  <Button
+                    type="button"
+                    onClick={() => onDelete(url)}
+                    variant="destructive"
+                    size="icon"
+                  >
+                    <Trash className=" h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             ))}
           </div>
