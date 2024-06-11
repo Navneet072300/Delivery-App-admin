@@ -54,7 +54,7 @@ export const POST = async (
     };
 
     const billboardRef = await addDoc(
-      collection(db, "store", params.storeId),
+      collection(db, "store", params.storeId, "billboards"),
       billboardData
     );
 
