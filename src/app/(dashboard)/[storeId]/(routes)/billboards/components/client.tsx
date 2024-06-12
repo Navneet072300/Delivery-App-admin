@@ -32,7 +32,7 @@ export const BillBoardClient = ({ data }: BillBoardClientProps) => {
       </div>
 
       <Separator />
-      <DataTable columns={columns} data={data} />
+      <DataTable searchKey="label" columns={columns} data={data} />
     </>
   );
 };
