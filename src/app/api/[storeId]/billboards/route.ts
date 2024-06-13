@@ -37,7 +37,7 @@ export const POST = async (
       return new NextResponse("Store Id is missing", { status: 400 });
     }
 
-    const store = await getDoc(doc(db, "store", params.storeId));
+    const store = await getDoc(doc(db, "stores", params.storeId));
 
     if (store.exists()) {
       let storeData = store.data();
@@ -54,13 +54,13 @@ export const POST = async (
     };
 
     const billboardRef = await addDoc(
-      collection(db, "store", params.storeId, "billboards"),
+      collection(db, "stores", params.storeId, "billboards"),
       billboardData
     );
 
     const id = billboardRef.id;
 
-    await updateDoc(doc(db, "store", params.storeId, "billboards", id), {
+    await updateDoc(doc(db, "stores", params.storeId, "billboards", id), {
       ...billboardData,
       id,
       updatedAt: serverTimestamp(),

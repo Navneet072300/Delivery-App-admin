@@ -38,7 +38,7 @@ export const PATCH = async (
       return new NextResponse("Billboard Id is missing", { status: 400 });
     }
 
-    const store = await getDoc(doc(db, "store", params.storeId));
+    const store = await getDoc(doc(db, "stores", params.storeId));
 
     if (store.exists()) {
       let storeData = store.data();
@@ -49,12 +49,12 @@ export const PATCH = async (
     }
 
     const billboardRef = await getDoc(
-      doc(db, "store", params.storeId, "billboards", params.billboardId)
+      doc(db, "stores", params.storeId, "billboards", params.billboardId)
     );
 
     if (billboardRef.exists()) {
       await updateDoc(
-        doc(db, "store", params.storeId, "billboards", params.billboardId),
+        doc(db, "stores", params.storeId, "billboards", params.billboardId),
         {
           ...billboardRef.data(),
           label,
@@ -68,7 +68,7 @@ export const PATCH = async (
 
     const billboard = (
       await getDoc(
-        doc(db, "store", params.storeId, "billboards", params.billboardId)
+        doc(db, "stores", params.storeId, "billboards", params.billboardId)
       )
     ).data() as Billboards;
 
@@ -99,7 +99,7 @@ export const DELETE = async (
       return new NextResponse("Billboard Id is missing", { status: 400 });
     }
 
-    const store = await getDoc(doc(db, "store", params.storeId));
+    const store = await getDoc(doc(db, "stores", params.storeId));
 
     if (store.exists()) {
       let storeData = store.data();
@@ -111,7 +111,7 @@ export const DELETE = async (
 
     const billboardRef = doc(
       db,
-      "store",
+      "stores",
       params.storeId,
       "billboards",
       params.billboardId
@@ -120,7 +120,7 @@ export const DELETE = async (
 
     const billboard = (
       await getDoc(
-        doc(db, "store", params.storeId, "billboards", params.billboardId)
+        doc(db, "stores", params.storeId, "billboards", params.billboardId)
       )
     ).data() as Billboards;
 

@@ -7,7 +7,7 @@ import { BillboardColumns } from "./components/columns";
 
 const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
   const billboardData = (
-    await getDocs(collection(doc(db, "store", params.storeId), "billboards"))
+    await getDocs(collection(doc(db, "stores", params.storeId), "billboards"))
   ).docs.map((doc) => doc.data()) as Billboards[];
 
   const formattedBillboards: BillboardColumns[] = billboardData.map((item) => ({
