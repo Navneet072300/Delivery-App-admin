@@ -43,7 +43,9 @@ const CellActions = ({ data }: CellActionProps) => {
       });
 
       toast.success("Billboard Removed");
-      router.refresh();
+      //router.refresh();
+
+      location.reload();
       router.push(`/${params.storeId}/billboards`);
     } catch (error) {
       toast.error("Something went wrong");
