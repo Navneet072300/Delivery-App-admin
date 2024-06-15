@@ -1,23 +1,27 @@
 import { db } from "@/lib/firebase";
-import { Billboards } from "@/type-db";
-import { doc, getDoc } from "firebase/firestore";
-import BillboardForm from "./_components/billboard-form";
+import { Billboards, Category } from "@/type-db";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import CategoryForm from "./_components/billboard-form";
 
 const BillboardPage = async ({
   params,
 }: {
-  params: { storeId: string; billboardId: string };
+  params: { storeId: string; categoryId: string };
 }) => {
-  const billboard = (
+  const category = (
     await getDoc(
-      doc(db, "stores", params.storeId, "billboards", params.billboardId)
+      doc(db, "stores", params.storeId, "categories", params.categoryId)
     )
-  ).data() as Billboards;
+  ).data() as Category;
+
+  const billboardData = (
+    await getDocs(collection(doc(db, "stores", params.storeId), "billboards"))
+  ).docs.map((doc) => doc.data()) as Billboards[];
 
   return (
     <div className=" flex-col">
       <div className=" flex-1 space-y-4 p-8 pt-6">
-        <BillboardForm initialData={billboard} />
+        <CategoryForm initialData={category} billboards={billboardData} />
       </div>
     </div>
   );
