@@ -62,13 +62,22 @@ const CategoryForm = ({ initialData, billboards }: CategoryFormProps) => {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
+
+      const { billboardId: formBillId } = form.getValues();
+      const matchingBillboard = billboards.find(
+        (item) => item.id === formBillId
+      );
+
       if (initialData) {
         await axios.patch(
           `/api/${params.storeId}/categories/${params.categoryId}`,
           data
         );
       } else {
-        await axios.post(`/api/${params.storeId}/categories`, data);
+        await axios.post(`/api/${params.storeId}/categories`, {
+          ...data,
+          billboardLabel: matchingBillboard?.label,
+        });
       }
       toast.success(toastMessage);
       router.refresh();
