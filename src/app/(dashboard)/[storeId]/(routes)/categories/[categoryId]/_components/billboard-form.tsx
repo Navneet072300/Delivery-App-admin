@@ -71,7 +71,10 @@ const CategoryForm = ({ initialData, billboards }: CategoryFormProps) => {
       if (initialData) {
         await axios.patch(
           `/api/${params.storeId}/categories/${params.categoryId}`,
-          data
+          {
+            ...data,
+            billboardLabel: matchingBillboard?.label,
+          }
         );
       } else {
         await axios.post(`/api/${params.storeId}/categories`, {

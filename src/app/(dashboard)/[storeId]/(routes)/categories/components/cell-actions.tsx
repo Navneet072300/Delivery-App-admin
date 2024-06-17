@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { BillboardColumns } from "./columns";
+import { CategoryColumns } from "./columns";
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -19,7 +19,7 @@ import axios from "axios";
 import AlertModal from "@/components/modal/alert-modal";
 
 interface CellActionProps {
-  data: BillboardColumns;
+  data: CategoryColumns;
 }
 
 const CellActions = ({ data }: CellActionProps) => {
@@ -31,22 +31,18 @@ const CellActions = ({ data }: CellActionProps) => {
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success("Billboard id copied to clipboard");
+    toast.success("Category id copied to clipboard");
   };
 
   const onDelete = async () => {
     try {
       setIsLoading(true);
 
-      await deleteObject(ref(storage, data.imageUrl)).then(async () => {
-        await axios.delete(`/api/${params.storeId}/billboards/${data.id}`);
-      });
+      await axios.delete(`/api/${params.storeId}/categories/${data.id}`);
 
-      toast.success("Billboard Removed");
-      //router.refresh();
-
-      location.reload();
-      router.push(`/${params.storeId}/billboards`);
+      toast.success("Category Removed");
+      router.refresh();
+      router.push(`/${params.storeId}/categories`);
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
@@ -82,7 +78,7 @@ const CellActions = ({ data }: CellActionProps) => {
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
-              router.push(`/${params.storeId}/billboards/${data.id}`)
+              router.push(`/${params.storeId}/categories/${data.id}`)
             }
             className=" cursor-pointer"
           >
