@@ -12,6 +12,8 @@ COPY package-lock.json .
 
 COPY . .
 
+COPY .env .env
+
 
 RUN npm install
 

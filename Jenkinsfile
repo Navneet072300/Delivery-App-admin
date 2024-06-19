@@ -1,33 +1,55 @@
 pipeline {
     agent any
+
+    environment {
+        // Define environment variables here if needed
+        // Example: NODE_ENV = 'production'
+    }
+
     stages {
-        stage("checkout"){
-            steps{
-                checkout scm
+        stage('Checkout') {
+            steps {
+                // Checkout the repository
+                git branch: 'main', url: 'https://github.com/Navneet072300/Delivery-App-admin.git'
             }
         }
+
         stage('Install Dependencies') {
             steps {
-                // Install Node.js and npm
-                sh 'sudo apt install npm'
+                // Install dependencies
+                sh 'npm install'
             }
         }
+
         stage('Build') {
             steps {
-                // Build the React app
+                // Build the application
                 sh 'npm run build'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run tests
+                sh 'npm test'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // Deploy the application
+                // This could be a shell script or a deployment tool command
+                sh 'npm run deploy'
             }
         }
     }
 
     post {
         success {
-            // Notify success
-            echo 'Build successful! Your React app is ready for deployment.'
+            echo 'Build and deployment succeeded!'
         }
         failure {
-            // Notify failure
-            echo 'Build failed! Check the Jenkins console output for details.'
+            echo 'Build or deployment failed.'
         }
     }
 }
