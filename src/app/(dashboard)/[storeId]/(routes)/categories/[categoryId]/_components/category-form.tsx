@@ -1,7 +1,6 @@
 "use client";
 
 import Heading from "@/components/Heading";
-import ImageUpload from "@/components/ImageUpload";
 import AlertModal from "@/components/modal/alert-modal";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,11 +20,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { storage } from "@/lib/firebase";
+
 import { Billboards, Category } from "@/type-db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { deleteObject, ref } from "firebase/storage";
+
 import { Trash } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -101,7 +100,7 @@ const CategoryForm = ({ initialData, billboards }: CategoryFormProps) => {
       );
 
       toast.success("Category Removed");
-      router.refresh();
+      location.reload();
       router.push(`/${params.storeId}/categories`);
     } catch (error) {
       toast.error("Something went wrong");
