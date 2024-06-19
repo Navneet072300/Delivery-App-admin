@@ -9,13 +9,18 @@ pipeline {
         stage("Install Dependencies") {
             steps {
                 // Install Node.js and npm
-                sh 'npm install'
+                sh 'sudo apt install npm'
             }
         }
         stage("Build") {
             steps {
                 // Build the React app
                 sh 'npm run build'
+            }
+        }
+        stage("Build Image"){
+            steps{
+                sh 'docker build -t escanor007/my_store .'
             }
         }
     }
