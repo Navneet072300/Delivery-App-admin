@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        // Define the NodeJS tool to use
+        nodejs 'NodeJS 14' // This should match the name you configured in Jenkins
+    }
 
     stages {
         stage('Checkout') {
