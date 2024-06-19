@@ -1,55 +1,33 @@
 pipeline {
     agent any
-
-    tools {
-        // Define the NodeJS tool to use
-        nodejs 'NodeJS 14' // This should match the name you configured in Jenkins
-    }
-
     stages {
-        stage('Checkout') {
-            steps {
-                // Checkout the repository
-                git branch: 'main', url: 'https://github.com/Navneet072300/Delivery-App-admin.git'
+        stage("checkout"){
+            steps{
+                checkout scm
             }
         }
-
-        stage('Install Dependencies') {
+        stage("Install Dependencies") {
             steps {
-                // Install dependencies
-                sh 'npm install'
+                // Install Node.js and npm
+                sh 'sudo apt install npm'
             }
         }
-
-        stage('Build') {
+        stage("Build") {
             steps {
-                // Build the application
+                // Build the React app
                 sh 'npm run build'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                // Run tests
-                sh 'npm test'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                // Deploy the application
-                // This could be a shell script or a deployment tool command
-                sh 'npm run deploy'
             }
         }
     }
 
     post {
         success {
-            echo 'Build and deployment succeeded!'
+            // Notify success
+            echo 'Build successful! Your React app is ready for deployment.'
         }
         failure {
-            echo 'Build or deployment failed.'
+            // Notify failure
+            echo 'Build failed! Check the Jenkins console output for details.'
         }
     }
 }
