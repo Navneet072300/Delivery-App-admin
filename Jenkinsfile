@@ -1,38 +1,37 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:14' // Use the official Node.js Docker image with Node.js version 14
-            args '-u root:root' // Run as root to avoid permission issues
-        }
-    }
+    agent any
     stages {
-        stage('Checkout') {
-            steps {
+        stage("checkout"){
+            steps{
                 checkout scm
             }
         }
-        stage('Install Dependencies') {
+        stage("Install Dependencies") {
             steps {
-                sh 'npm install'
+                // Install Node.js and npm
+                sh 'sudo apt -S install npm'
             }
         }
-        stage('Build') {
+        stage("Build") {
             steps {
+                // Build the React app
                 sh 'npm run build'
             }
         }
-        stage('Build Image') {
-            steps {
-                // Ensure Docker is installed and running on the Jenkins node
+        stage("Build Image"){
+            steps{
                 sh 'docker build -t escanor007/my_store .'
             }
         }
     }
+
     post {
         success {
+            // Notify success
             echo 'Build successful! Your React app is ready for deployment.'
         }
         failure {
+            // Notify failure
             echo 'Build failed! Check the Jenkins console output for details.'
         }
     }
