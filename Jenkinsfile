@@ -9,7 +9,10 @@ pipeline {
         stage("Install Dependencies") {
             steps {
                 // Install Node.js and npm
-                sh 'sudo apt install npm'
+                 script {
+                    def user = 'builduser' // Replace with your non-root user
+                    sh "sudo -u $user apt install -y nodejs npm" // Install with sudo under non-root user
+                }
             }
         }
         stage("Build") {
