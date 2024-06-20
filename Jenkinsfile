@@ -18,11 +18,7 @@ pipeline {
                 sh 'npm run build'
             }
         }
-        stage("Build Image"){
-            steps{
-                sh 'docker build -t escanor007/my_store .'
-            }
-        }
+     
     }
 
     post {
