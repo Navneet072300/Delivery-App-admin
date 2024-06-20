@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { CategoryColumns } from "./columns";
+import { SizeColumns } from "./columns";
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -13,13 +13,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Copy, Edit, MoreVertical, Trash } from "lucide-react";
 import toast from "react-hot-toast";
-import { deleteObject, ref } from "firebase/storage";
-import { storage } from "@/lib/firebase";
 import axios from "axios";
 import AlertModal from "@/components/modal/alert-modal";
 
 interface CellActionProps {
-  data: CategoryColumns;
+  data: SizeColumns;
 }
 
 const CellActions = ({ data }: CellActionProps) => {

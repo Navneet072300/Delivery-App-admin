@@ -1,11 +1,10 @@
 "use client";
 
-import Model from "@/components/model";
 import { useStoreModel } from "@/hooks/user-store-model";
-import { UserButton } from "@clerk/nextjs";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
-export default function page() {
+// Rename the function to start with an uppercase letter
+export default function Page() {
   const onOpen = useStoreModel((state) => state.onOpen);
   const isOpen = useStoreModel((state) => state.isOpen);
 
@@ -14,5 +13,6 @@ export default function page() {
       onOpen();
     }
   }, [isOpen, onOpen]);
+
   return null;
 }
