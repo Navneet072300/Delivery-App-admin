@@ -9,7 +9,7 @@ pipeline {
         stage("Install Dependencies") {
             steps {
                 // Install Node.js and npm
-                sh 'sudo apt install npm'
+                sh 'sudo apt install npm -y'
             }
         }
         stage("Build") {
