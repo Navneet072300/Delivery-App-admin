@@ -6,7 +6,12 @@ pipeline {
                 checkout scm
             }
         }
-       
+        stage("Install Dependencies") {
+            steps {
+                // Install Node.js and npm
+                sh 'npm i'
+            }
+        }
         stage("Build") {
             steps {
                 // Build the React app
