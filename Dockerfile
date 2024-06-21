@@ -10,9 +10,9 @@ COPY package.json .
 COPY package-lock.json .
 
 
-COPY . .
+COPY . ./
 
-COPY .env ./
+
 
 
 RUN npm install
