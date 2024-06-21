@@ -21,7 +21,7 @@ pipeline {
         stage("Build Image") {
             steps {
                 // Build the React app
-                sh ' docker run -p  3000:3000 -d  escanor007/my_store'
+                sh ' docker build -t escanor007/my_store .  '
             }
         }
      
