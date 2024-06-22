@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { Billboards, Category } from "@/type-db";
+import { Category, Size } from "@/type-db";
 import { auth } from "@clerk/nextjs/server";
 import {
   deleteDoc,
@@ -12,7 +12,7 @@ import { NextResponse } from "next/server";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { storeId: string; categoryId: string } }
+  { params }: { params: { storeId: string; sizeId: string } }
 ) => {
   try {
     const { userId } = auth();
@@ -22,13 +22,13 @@ export const PATCH = async (
       return new NextResponse("Un-Authorized", { status: 400 });
     }
 
-    const { name, billboardLabel, billboardId } = body;
+    const { name, value } = body;
 
     if (!name) {
-      return new NextResponse("Category name is missing", { status: 400 });
+      return new NextResponse("Size name is missing", { status: 400 });
     }
-    if (!billboardId) {
-      return new NextResponse("Billboard  is missing", { status: 400 });
+    if (!value) {
+      return new NextResponse("Size value is missing", { status: 400 });
     }
 
     if (!params.storeId) {
@@ -40,23 +40,21 @@ export const PATCH = async (
     if (store.exists()) {
       let storeData = store.data();
       if (storeData?.userId !== userId) {
-        console.log("ye wala error");
         return new NextResponse("Un-Authorized", { status: 500 });
       }
     }
 
-    const categoryRef = await getDoc(
-      doc(db, "stores", params.storeId, "categories", params.categoryId)
+    const sizeRef = await getDoc(
+      doc(db, "stores", params.storeId, "sizes", params.sizeId)
     );
 
-    if (categoryRef.exists()) {
+    if (sizeRef.exists()) {
       await updateDoc(
-        doc(db, "stores", params.storeId, "categories", params.categoryId),
+        doc(db, "stores", params.storeId, "sizes", params.sizeId),
         {
-          ...categoryRef.data(),
+          ...sizeRef.data(),
           name,
-          billboardId,
-          billboardLabel,
+          value,
           updatedAt: serverTimestamp(),
         }
       );
@@ -64,15 +62,12 @@ export const PATCH = async (
       return new NextResponse("Category Not Found", { status: 400 });
     }
 
-    const category = (
-      await getDoc(
-        doc(db, "stores", params.storeId, "categories", params.categoryId)
-      )
-    ).data() as Category;
+    const size = (
+      await getDoc(doc(db, "stores", params.storeId, "sizes", params.sizeId))
+    ).data() as Size;
 
-    return NextResponse.json({ category });
+    return NextResponse.json({ size });
   } catch (error) {
-    console.log("dusra wala error");
     console.log(`CATEGORY_PATCH: ${error}`);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
@@ -81,7 +76,7 @@ export const PATCH = async (
 //delete
 export const DELETE = async (
   req: Request,
-  { params }: { params: { storeId: string; categoryId: string } }
+  { params }: { params: { storeId: string; sizeId: string } }
 ) => {
   try {
     const { userId } = auth();
@@ -93,8 +88,8 @@ export const DELETE = async (
     if (!params.storeId) {
       return new NextResponse("Store Id is missing", { status: 400 });
     }
-    if (!params.categoryId) {
-      return new NextResponse("Category Id is missing", { status: 400 });
+    if (!params.sizeId) {
+      return new NextResponse("Size Id is missing", { status: 400 });
     }
 
     const store = await getDoc(doc(db, "stores", params.storeId));
@@ -102,30 +97,29 @@ export const DELETE = async (
     if (store.exists()) {
       let storeData = store.data();
       if (storeData?.userId !== userId) {
-        console.log("ye wala error");
         return new NextResponse("Un-Authorized", { status: 500 });
       }
     }
 
-    const categoryRef = doc(
+    const sizeRef = doc(
       db,
       "stores",
       params.storeId,
       "billboards",
-      params.categoryId
+      params.sizeId
     );
-    await deleteDoc(categoryRef);
+    await deleteDoc(sizeRef);
 
     const category = (
       await getDoc(
-        doc(db, "stores", params.storeId, "billboards", params.categoryId)
+        doc(db, "stores", params.storeId, "billboards", params.sizeId)
       )
     ).data() as Category;
 
     return NextResponse.json({ category });
   } catch (error) {
     console.log("dusra wala error");
-    console.log(`CATEGORY_DELETE: ${error}`);
+    console.log(`SIZE_DELETE: ${error}`);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 };

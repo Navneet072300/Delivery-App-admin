@@ -27,7 +27,7 @@ export const POST = async (
     const { name, value } = body;
 
     if (!name) {
-      return new NextResponse("Category name is missing", { status: 400 });
+      return new NextResponse("Size name is missing", { status: 400 });
     }
     if (!value) {
       return new NextResponse("Size Value  is missing", { status: 400 });
