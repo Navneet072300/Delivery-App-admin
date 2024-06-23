@@ -101,13 +101,7 @@ export const DELETE = async (
       }
     }
 
-    const sizeRef = doc(
-      db,
-      "stores",
-      params.storeId,
-      "billboards",
-      params.sizeId
-    );
+    const sizeRef = doc(db, "stores", params.storeId, "sizes", params.sizeId);
     await deleteDoc(sizeRef);
 
     const category = (

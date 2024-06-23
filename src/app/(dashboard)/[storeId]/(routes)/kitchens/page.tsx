@@ -2,16 +2,16 @@ import { collection, doc, getDocs } from "firebase/firestore";
 
 import { format } from "date-fns";
 import { db } from "@/lib/firebase";
-import { Size } from "@/type-db";
-import { SizeColumns } from "./components/columns";
-import { SizesClient } from "./components/client";
+import { KitchenClient } from "./components/client";
+import { Kitchen } from "@/type-db";
+import { KitchenColumns } from "./components/columns";
 
-const SizesPage = async ({ params }: { params: { storeId: string } }) => {
-  const sizesData = (
-    await getDocs(collection(doc(db, "stores", params.storeId), "sizes"))
-  ).docs.map((doc) => doc.data()) as Size[];
+const KitchensPage = async ({ params }: { params: { storeId: string } }) => {
+  const kitchensData = (
+    await getDocs(collection(doc(db, "stores", params.storeId), "kitchens"))
+  ).docs.map((doc) => doc.data()) as Kitchen[];
 
-  const formattedSizes: SizeColumns[] = sizesData.map((item) => ({
+  const formattedKitchens: KitchenColumns[] = kitchensData.map((item) => ({
     id: item.id,
     name: item.name,
     value: item.value,
@@ -23,10 +23,10 @@ const SizesPage = async ({ params }: { params: { storeId: string } }) => {
   return (
     <div className=" flex-col">
       <div className=" flex-1 space-y-4 p-8 pt-6">
-        <SizesClient data={formattedSizes} />
+        <KitchenClient data={formattedKitchens} />
       </div>
     </div>
   );
 };
 
-export default SizesPage;
+export default KitchensPage;

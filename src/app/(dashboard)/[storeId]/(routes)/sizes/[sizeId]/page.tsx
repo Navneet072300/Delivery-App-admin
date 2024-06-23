@@ -3,7 +3,7 @@ import { Size } from "@/type-db";
 import { doc, getDoc } from "firebase/firestore";
 import SizeForm from "./_components/size-form";
 
-const BillboardPage = async ({
+const SizePage = async ({
   params,
 }: {
   params: { sizeId: string; storeId: string };
@@ -21,4 +21,4 @@ const BillboardPage = async ({
   );
 };
 
-export default BillboardPage;
+export default SizePage;

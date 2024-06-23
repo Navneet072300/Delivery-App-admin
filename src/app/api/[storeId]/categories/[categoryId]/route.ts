@@ -111,14 +111,14 @@ export const DELETE = async (
       db,
       "stores",
       params.storeId,
-      "billboards",
+      "categories",
       params.categoryId
     );
     await deleteDoc(categoryRef);
 
     const category = (
       await getDoc(
-        doc(db, "stores", params.storeId, "billboards", params.categoryId)
+        doc(db, "stores", params.storeId, "categories", params.categoryId)
       )
     ).data() as Category;
 

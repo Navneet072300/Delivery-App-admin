@@ -6,14 +6,14 @@ import { DataTable } from "@/components/ui/data-table";
 import { Separator } from "@/components/ui/separator";
 import { Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { SizeColumns, columns } from "./columns";
+import { KitchenColumns, columns } from "./columns";
 import APIList from "@/components/APIList";
 
-interface SizesClientProps {
-  data: SizeColumns[];
+interface KitchenClientProps {
+  data: KitchenColumns[];
 }
 
-export const SizesClient = ({ data }: SizesClientProps) => {
+export const KitchenClient = ({ data }: KitchenClientProps) => {
   const params = useParams();
   const router = useRouter();
 
@@ -21,10 +21,10 @@ export const SizesClient = ({ data }: SizesClientProps) => {
     <>
       <div className=" flex items-center justify-between">
         <Heading
-          title={`Sizes (${data.length})`}
+          title={`Kitchens (${data.length})`}
           description="Manage categories for your store"
         />
-        <Button onClick={() => router.push(`/${params.storeId}/sizes/new`)}>
+        <Button onClick={() => router.push(`/${params.storeId}/kitchens/new`)}>
           <Plus className=" h-4 w-4 mr-2" />
           Add New
         </Button>

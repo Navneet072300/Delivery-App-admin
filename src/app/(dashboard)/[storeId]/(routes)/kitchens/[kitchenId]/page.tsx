@@ -1,24 +1,26 @@
 import { db } from "@/lib/firebase";
-import { Size } from "@/type-db";
+import { Kitchen } from "@/type-db";
 import { doc, getDoc } from "firebase/firestore";
-import SizeForm from "./_components/size-form";
+import KitchenForm from "./_components/kitchen-form";
 
-const BillboardPage = async ({
+const KitchenPage = async ({
   params,
 }: {
-  params: { sizeId: string; storeId: string };
+  params: { storeId: string; kitchenId: string };
 }) => {
-  const size = (
-    await getDoc(doc(db, "stores", params.storeId, "sizes", params.sizeId))
-  ).data() as Size;
+  const kitchen = (
+    await getDoc(
+      doc(db, "stores", params.storeId, "kitchens", params.kitchenId)
+    )
+  ).data() as Kitchen;
 
   return (
     <div className=" flex-col">
       <div className=" flex-1 space-y-4 p-8 pt-6">
-        <SizeForm initialData={size} />
+        <KitchenForm initialData={kitchen} />
       </div>
     </div>
   );
 };
 
-export default BillboardPage;
+export default KitchenPage;
