@@ -27,13 +27,16 @@ export const POST = async (
     const { name, value } = body;
 
     if (!name) {
+      console.log("ye wala error3");
       return new NextResponse("Size name is missing", { status: 400 });
     }
     if (!value) {
+      console.log("ye wala error4");
       return new NextResponse("Size Value  is missing", { status: 400 });
     }
 
     if (!params.storeId) {
+      console.log("ye wala error5");
       return new NextResponse("Store Id is missing", { status: 400 });
     }
 
@@ -42,7 +45,7 @@ export const POST = async (
     if (store.exists()) {
       let storeData = store.data();
       if (storeData?.userId !== userId) {
-        console.log("ye wala error");
+        console.log("ye wala error 1");
         return new NextResponse("Un-Authorized", { status: 500 });
       }
     }
@@ -68,7 +71,7 @@ export const POST = async (
 
     return NextResponse.json({ id, ...sizeData });
   } catch (error) {
-    console.log("dusra wala error");
+    console.log("ye wala error 2");
     console.log(`SIZES_POST: ${error}`);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
