@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { Kitchen, Size } from "@/type-db";
+import { Cuisine } from "@/type-db";
 import { auth } from "@clerk/nextjs/server";
 import {
   addDoc,
@@ -28,11 +28,11 @@ export const POST = async (
 
     if (!name) {
       console.log("ye wala error3");
-      return new NextResponse("Kitchen name is missing", { status: 400 });
+      return new NextResponse("Cuisine name is missing", { status: 400 });
     }
     if (!value) {
       console.log("ye wala error4");
-      return new NextResponse("Kitchen Value  is missing", { status: 400 });
+      return new NextResponse("Cuisine Value  is missing", { status: 400 });
     }
 
     if (!params.storeId) {
@@ -40,7 +40,7 @@ export const POST = async (
       return new NextResponse("Store Id is missing", { status: 400 });
     }
 
-    const store = await getDoc(doc(db, "kitchens", params.storeId));
+    const store = await getDoc(doc(db, "cuisines", params.storeId));
 
     if (store.exists()) {
       let storeData = store.data();
@@ -50,29 +50,29 @@ export const POST = async (
       }
     }
 
-    const kitchenData = {
+    const cuisineData = {
       name,
       value,
       createdAt: serverTimestamp(),
     };
 
-    const kitchenRef = await addDoc(
-      collection(db, "stores", params.storeId, "kitchens"),
-      kitchenData
+    const cuisineRef = await addDoc(
+      collection(db, "stores", params.storeId, "cuisines"),
+      cuisineData
     );
 
-    const id = kitchenRef.id;
+    const id = cuisineRef.id;
 
-    await updateDoc(doc(db, "stores", params.storeId, "kitchens", id), {
-      ...kitchenData,
+    await updateDoc(doc(db, "stores", params.storeId, "cuisines", id), {
+      ...cuisineData,
       id,
       updatedAt: serverTimestamp(),
     });
 
-    return NextResponse.json({ id, ...kitchenData });
+    return NextResponse.json({ id, ...cuisineData });
   } catch (error) {
     console.log("ye wala error 2");
-    console.log(`KITCHENS_POST: ${error}`);
+    console.log(`CUISINES_POST: ${error}`);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 };
@@ -87,13 +87,13 @@ export const GET = async (
       return new NextResponse("Store Id is missing", { status: 400 });
     }
 
-    const kitchenData = (
-      await getDocs(collection(doc(db, "stores", params.storeId), "kitchens"))
-    ).docs.map((doc) => doc.data()) as Kitchen[];
+    const cuisineData = (
+      await getDocs(collection(doc(db, "stores", params.storeId), "cuisines"))
+    ).docs.map((doc) => doc.data()) as Cuisine[];
 
-    return NextResponse.json(kitchenData);
+    return NextResponse.json(cuisineData);
   } catch (error) {
-    console.log(`KITCHENS_GET: ${error}`);
+    console.log(`CUISINES_GET: ${error}`);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 };
