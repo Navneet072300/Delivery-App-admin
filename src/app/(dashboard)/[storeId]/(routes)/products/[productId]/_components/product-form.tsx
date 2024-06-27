@@ -3,17 +3,26 @@
 import Heading from "@/components/Heading";
 import AlertModal from "@/components/modal/alert-modal";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Product } from "@/type-db";
+import { Category, Cuisine, Kitchen, Product, Size } from "@/type-db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Trash } from "lucide-react";
@@ -25,14 +34,31 @@ import { z } from "zod";
 
 interface ProductFormProps {
   initialData: Product;
+  categories: Category[];
+  sizes: Size[];
+  kitchens: Kitchen[];
+  cuisines: Cuisine[];
 }
 
 const formSchema = z.object({
   name: z.string().min(1),
-  value: z.string().min(1),
+  price: z.coerce.number().min(1),
+  images: z.object({ url: z.string() }).array(),
+  isFeatured: z.boolean().default(false).optional(),
+  isArchived: z.boolean().default(false).optional(),
+  category: z.string().min(1),
+  size: z.string().min(1),
+  kitchen: z.string().min(1),
+  cuisine: z.string().min(1),
 });
 
-const ProductForm = ({ initialData }: ProductFormProps) => {
+const ProductForm = ({
+  initialData,
+  categories,
+  sizes,
+  kitchens,
+  cuisines,
+}: ProductFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData,
@@ -138,18 +164,183 @@ const ProductForm = ({ initialData }: ProductFormProps) => {
             />
             <FormField
               control={form.control}
-              name="value"
+              name="price"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Value</FormLabel>
                   <FormControl>
                     <Input
+                      type="number"
                       disabled={isLoading}
-                      placeholder="Your product value..."
+                      placeholder="Your product price..."
                       {...field}
                     />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select a category"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.name}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="size"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Size</FormLabel>
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select a size"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {sizes.map((size) => (
+                        <SelectItem key={size.id} value={size.name}>
+                          {size.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="kitchen"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Kitchen</FormLabel>
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select a kitchen"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {kitchens.map((kitchen) => (
+                        <SelectItem key={kitchen.id} value={kitchen.name}>
+                          {kitchen.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cuisine"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cuisine</FormLabel>
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select a cuisine"
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {cuisines.map((cuisine) => (
+                        <SelectItem key={cuisine.id} value={cuisine.name}>
+                          {cuisine.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="isFeatured"
+              render={({ field }) => (
+                <FormItem className=" flex flex-row items-start space-x-3 space-y-0 rounded-md border p-3">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className=" space-y-1 leading-none">
+                    <FormLabel>Featured</FormLabel>
+                    <FormDescription>
+                      This product will be on home screen under featured product
+                    </FormDescription>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="isArchived"
+              render={({ field }) => (
+                <FormItem className=" flex flex-row items-start space-x-3 space-y-0 rounded-md border p-3">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className=" space-y-1 leading-none">
+                    <FormLabel>Archived</FormLabel>
+                    <FormDescription>
+                      This product will not be on display
+                    </FormDescription>
+                  </div>
                 </FormItem>
               )}
             />
