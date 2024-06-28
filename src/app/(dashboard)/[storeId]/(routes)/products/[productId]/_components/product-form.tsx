@@ -1,6 +1,7 @@
 "use client";
 
 import Heading from "@/components/Heading";
+import ImagesUpload from "@/components/ImagesUpload";
 import AlertModal from "@/components/modal/alert-modal";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -61,7 +62,17 @@ const ProductForm = ({
 }: ProductFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData,
+    defaultValues: {
+      name: "",
+      price: 0,
+      images: [],
+      isFeatured: false,
+      isArchived: false,
+      category: "",
+      size: "",
+      kitchen: "",
+      cuisine: "",
+    },
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -144,6 +155,30 @@ const ProductForm = ({
           onSubmit={form.handleSubmit(onSubmit)}
           className=" w-full space-y-8 "
         >
+          <FormField
+            control={form.control}
+            name="images"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Billboard Image</FormLabel>
+                <FormControl>
+                  <ImagesUpload
+                    value={field.value.map((image) => image.url)}
+                    disabled={isLoading}
+                    onChange={(urls) => {
+                      field.onChange(urls.map((url) => ({ url })));
+                    }}
+                    onRemove={(url) => {
+                      field.onChange(
+                        field.value.filter((current) => current.url !== url)
+                      );
+                    }}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
           <div className=" grid grid-cols-3 gap-8">
             <FormField
               control={form.control}
@@ -338,7 +373,8 @@ const ProductForm = ({
                   <div className=" space-y-1 leading-none">
                     <FormLabel>Archived</FormLabel>
                     <FormDescription>
-                      This product will not be on display
+                      This product will not be on display anywhere inside the
+                      store
                     </FormDescription>
                   </div>
                 </FormItem>
