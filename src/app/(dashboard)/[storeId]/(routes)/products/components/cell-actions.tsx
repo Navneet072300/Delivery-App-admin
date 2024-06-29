@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { SizeColumns } from "./columns";
+import { ProductColumns } from "./columns";
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -17,7 +17,7 @@ import axios from "axios";
 import AlertModal from "@/components/modal/alert-modal";
 
 interface CellActionProps {
-  data: SizeColumns;
+  data: ProductColumns;
 }
 
 const CellActions = ({ data }: CellActionProps) => {
@@ -29,18 +29,18 @@ const CellActions = ({ data }: CellActionProps) => {
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success("Size id copied to clipboard");
+    toast.success("Product id copied to clipboard");
   };
 
   const onDelete = async () => {
     try {
       setIsLoading(true);
 
-      await axios.delete(`/api/${params.storeId}/sizes/${data.id}`);
+      await axios.delete(`/api/${params.storeId}/products/${data.id}`);
 
-      toast.success("Size Removed");
-      router.refresh();
-      router.push(`/${params.storeId}/sizes`);
+      toast.success("Product Removed");
+      location.reload();
+      router.push(`/${params.storeId}/products`);
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
@@ -75,7 +75,9 @@ const CellActions = ({ data }: CellActionProps) => {
             Copy Id
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push(`/${params.storeId}/sizes/${data.id}`)}
+            onClick={() =>
+              router.push(`/${params.storeId}/products/${data.id}`)
+            }
             className=" cursor-pointer"
           >
             {" "}

@@ -1,5 +1,5 @@
 import { db } from "@/lib/firebase";
-import { Size } from "@/type-db";
+import { Product } from "@/type-db";
 import { auth } from "@clerk/nextjs/server";
 import {
   addDoc,
@@ -24,15 +24,31 @@ export const POST = async (
       return new NextResponse("Un-Authorized", { status: 400 });
     }
 
-    const { name, value } = body;
+    const {
+      name,
+      price,
+      images,
+      isFeatured,
+      isArchived,
+      category,
+      size,
+      kitchen,
+      cuisine,
+    } = body;
 
     if (!name) {
-      console.log("ye wala error3");
-      return new NextResponse("Size name is missing", { status: 400 });
+      return new NextResponse("Product name is missing", { status: 400 });
     }
-    if (!value) {
-      console.log("ye wala error4");
-      return new NextResponse("Size Value  is missing", { status: 400 });
+    if (!images || !images.length) {
+      return new NextResponse("Images are required", { status: 400 });
+    }
+
+    if (!category) {
+      return new NextResponse("Category is missing", { status: 400 });
+    }
+
+    if (!price) {
+      return new NextResponse("Price is missing", { status: 400 });
     }
 
     if (!params.storeId) {
@@ -50,29 +66,36 @@ export const POST = async (
       }
     }
 
-    const sizeData = {
+    const productData = {
       name,
-      value,
+      price,
+      images,
+      isFeatured,
+      isArchived,
+      category,
+      size,
+      kitchen,
+      cuisine,
       createdAt: serverTimestamp(),
     };
 
-    const sizeRef = await addDoc(
-      collection(db, "stores", params.storeId, "sizes"),
-      sizeData
+    const productRef = await addDoc(
+      collection(db, "stores", params.storeId, "products"),
+      productData
     );
 
-    const id = sizeRef.id;
+    const id = productRef.id;
 
-    await updateDoc(doc(db, "stores", params.storeId, "sizes", id), {
-      ...sizeData,
+    await updateDoc(doc(db, "stores", params.storeId, "products", id), {
+      ...productData,
       id,
       updatedAt: serverTimestamp(),
     });
 
-    return NextResponse.json({ id, ...sizeData });
+    return NextResponse.json({ id, ...productData });
   } catch (error) {
     console.log("ye wala error 2");
-    console.log(`SIZES_POST: ${error}`);
+    console.log(`PRODUCTS_POST: ${error}`);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 };
@@ -87,13 +110,13 @@ export const GET = async (
       return new NextResponse("Store Id is missing", { status: 400 });
     }
 
-    const sizeData = (
-      await getDocs(collection(doc(db, "stores", params.storeId), "sizes"))
-    ).docs.map((doc) => doc.data()) as Size[];
+    const productData = (
+      await getDocs(collection(doc(db, "stores", params.storeId), "products"))
+    ).docs.map((doc) => doc.data()) as Product[];
 
-    return NextResponse.json(sizeData);
+    return NextResponse.json(productData);
   } catch (error) {
-    console.log(`SIZES_POST: ${error}`);
+    console.log(`PRODUCTS_POST: ${error}`);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 };

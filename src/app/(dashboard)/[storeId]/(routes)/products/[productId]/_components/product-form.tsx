@@ -62,7 +62,7 @@ const ProductForm = ({
 }: ProductFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       name: "",
       price: 0,
       images: [],
@@ -98,7 +98,7 @@ const ProductForm = ({
         await axios.post(`/api/${params.storeId}/products`, data);
       }
       toast.success(toastMessage);
-      router.refresh();
+      location.reload();
       router.push(`/${params.storeId}/products`);
     } catch (error) {
       toast.error("Something went wrong");
@@ -160,7 +160,7 @@ const ProductForm = ({
             name="images"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Billboard Image</FormLabel>
+                <FormLabel>Product Images</FormLabel>
                 <FormControl>
                   <ImagesUpload
                     value={field.value.map((image) => image.url)}

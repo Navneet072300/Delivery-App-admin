@@ -105,9 +105,7 @@ export const DELETE = async (
     await deleteDoc(sizeRef);
 
     const category = (
-      await getDoc(
-        doc(db, "stores", params.storeId, "billboards", params.sizeId)
-      )
+      await getDoc(doc(db, "stores", params.storeId, "sizes", params.sizeId))
     ).data() as Category;
 
     return NextResponse.json({ category });

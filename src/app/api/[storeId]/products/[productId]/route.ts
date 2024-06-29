@@ -1,5 +1,5 @@
-import { db } from "@/lib/firebase";
-import { Category, Size } from "@/type-db";
+import { db, storage } from "@/lib/firebase";
+import { Product } from "@/type-db";
 import { auth } from "@clerk/nextjs/server";
 import {
   deleteDoc,
@@ -8,11 +8,12 @@ import {
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { NextResponse } from "next/server";
 
 export const PATCH = async (
   req: Request,
-  { params }: { params: { storeId: string; sizeId: string } }
+  { params }: { params: { storeId: string; productId: string } }
 ) => {
   try {
     const { userId } = auth();
@@ -22,13 +23,31 @@ export const PATCH = async (
       return new NextResponse("Un-Authorized", { status: 400 });
     }
 
-    const { name, value } = body;
+    const {
+      name,
+      price,
+      images,
+      isFeatured,
+      isArchived,
+      category,
+      size,
+      kitchen,
+      cuisine,
+    } = body;
 
     if (!name) {
-      return new NextResponse("Size name is missing", { status: 400 });
+      return new NextResponse("Product name is missing", { status: 400 });
     }
-    if (!value) {
-      return new NextResponse("Size value is missing", { status: 400 });
+    if (!images || !images.length) {
+      return new NextResponse("Images are required", { status: 400 });
+    }
+
+    if (!category) {
+      return new NextResponse("Category is missing", { status: 400 });
+    }
+
+    if (!price) {
+      return new NextResponse("Price is missing", { status: 400 });
     }
 
     if (!params.storeId) {
@@ -44,31 +63,40 @@ export const PATCH = async (
       }
     }
 
-    const sizeRef = await getDoc(
-      doc(db, "stores", params.storeId, "sizes", params.sizeId)
+    const productRef = await getDoc(
+      doc(db, "stores", params.storeId, "products", params.productId)
     );
 
-    if (sizeRef.exists()) {
+    if (productRef.exists()) {
       await updateDoc(
-        doc(db, "stores", params.storeId, "sizes", params.sizeId),
+        doc(db, "stores", params.storeId, "products", params.productId),
         {
-          ...sizeRef.data(),
+          ...productRef.data(),
           name,
-          value,
+          price,
+          images,
+          isFeatured,
+          isArchived,
+          category,
+          size,
+          kitchen,
+          cuisine,
           updatedAt: serverTimestamp(),
         }
       );
     } else {
-      return new NextResponse("Category Not Found", { status: 400 });
+      return new NextResponse("Product Not Found", { status: 400 });
     }
 
-    const size = (
-      await getDoc(doc(db, "stores", params.storeId, "sizes", params.sizeId))
-    ).data() as Size;
+    const product = (
+      await getDoc(
+        doc(db, "stores", params.storeId, "products", params.productId)
+      )
+    ).data() as Product;
 
-    return NextResponse.json({ size });
+    return NextResponse.json({ product });
   } catch (error) {
-    console.log(`CATEGORY_PATCH: ${error}`);
+    console.log(`PRODUCT_PATCH: ${error}`);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 };
@@ -76,7 +104,7 @@ export const PATCH = async (
 //delete
 export const DELETE = async (
   req: Request,
-  { params }: { params: { storeId: string; sizeId: string } }
+  { params }: { params: { storeId: string; productId: string } }
 ) => {
   try {
     const { userId } = auth();
@@ -88,8 +116,8 @@ export const DELETE = async (
     if (!params.storeId) {
       return new NextResponse("Store Id is missing", { status: 400 });
     }
-    if (!params.sizeId) {
-      return new NextResponse("Size Id is missing", { status: 400 });
+    if (!params.productId) {
+      return new NextResponse("Product Id is missing", { status: 400 });
     }
 
     const store = await getDoc(doc(db, "stores", params.storeId));
@@ -101,19 +129,60 @@ export const DELETE = async (
       }
     }
 
-    const sizeRef = doc(db, "stores", params.storeId, "sizes", params.sizeId);
-    await deleteDoc(sizeRef);
+    const productRef = doc(
+      db,
+      "stores",
+      params.storeId,
+      "products",
+      params.productId
+    );
 
-    const category = (
-      await getDoc(
-        doc(db, "stores", params.storeId, "billboards", params.sizeId)
-      )
-    ).data() as Category;
+    const productDoc = await getDoc(productRef);
+    if (!productDoc.exists()) {
+      return new NextResponse("Product not found", { status: 404 });
+    }
 
-    return NextResponse.json({ category });
+    const images = productDoc.data()?.images;
+    if (images && Array.isArray(images)) {
+      await Promise.all(
+        images.map(async (image) => {
+          const imageRef = ref(storage, image.url);
+          await deleteObject(imageRef);
+        })
+      );
+    }
+
+    await deleteDoc(productRef);
+
+    return NextResponse.json({ msg: "Product Deleted" });
   } catch (error) {
-    console.log("dusra wala error");
-    console.log(`SIZE_DELETE: ${error}`);
+    console.log(`PRODUCT_DELETE: ${error}`);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+};
+
+export const GET = async (
+  req: Request,
+  { params }: { params: { storeId: string; productId: string } }
+) => {
+  try {
+    if (!params.storeId) {
+      return new NextResponse("Store Id is missing", { status: 400 });
+    }
+
+    if (!params.productId) {
+      return new NextResponse("ProductId is missing", { status: 400 });
+    }
+
+    const product = (
+      await getDoc(
+        doc(db, "stores", params.storeId, "products", params.productId)
+      )
+    ).data() as Product;
+
+    return NextResponse.json({ product });
+  } catch (error) {
+    console.log(`PRODUCT_PATCH: ${error}`);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 };
