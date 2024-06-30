@@ -48,9 +48,9 @@ const formSchema = z.object({
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
   category: z.string().min(1),
-  size: z.string().min(1),
-  kitchen: z.string().min(1),
-  cuisine: z.string().min(1),
+  size: z.string().optional(),
+  kitchen: z.string().optional(),
+  cuisine: z.string().optional(),
 });
 
 const ProductForm = ({
