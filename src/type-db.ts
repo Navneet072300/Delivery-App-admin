@@ -61,18 +61,13 @@ export interface Product {
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
-export interface Product {
+export interface Order {
   id: string;
-  name: string;
-  price: number;
-  qty?: number;
-  images: { url: string }[];
-  isFeatured: boolean;
-  isArchived: boolean;
-  category: string;
-  size: string;
-  kitchen: string;
-  cuisine: string;
+  isPaid: boolean;
+  phone: string;
+  orderItems: Product[];
+  address: string;
+  order_status: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
