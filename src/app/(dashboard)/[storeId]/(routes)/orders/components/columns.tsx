@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import CellActions from "./cell-actions";
+import CellImage from "./cell-image";
 
 export type OrderColumns = {
   id: string;
@@ -18,6 +19,15 @@ export type OrderColumns = {
 };
 
 export const columns: ColumnDef<OrderColumns>[] = [
+  {
+    accessorKey: "images",
+    header: "Images",
+    cell: ({ row }) => (
+      <div className=" grid grid-cols-2 gap-2">
+        <CellImage data={row.original.images} />
+      </div>
+    ),
+  },
   {
     accessorKey: "products",
     header: "Products",

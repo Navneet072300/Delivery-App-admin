@@ -3,12 +3,15 @@ import { Product } from "@/type-db";
 import { auth } from "@clerk/nextjs/server";
 import {
   addDoc,
+  and,
   collection,
   doc,
   getDoc,
   getDocs,
+  query,
   serverTimestamp,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
@@ -110,10 +113,55 @@ export const GET = async (
       return new NextResponse("Store Id is missing", { status: 400 });
     }
 
-    const productData = (
-      await getDocs(collection(doc(db, "stores", params.storeId), "products"))
-    ).docs.map((doc) => doc.data()) as Product[];
+    // const productData = (
+    //   await getDocs(collection(doc(db, "stores", params.storeId), "products"))
+    // ).docs.map((doc) => doc.data()) as Product[];
 
+    // return NextResponse.json(productData);
+
+    const { searchParams } = new URL(req.url);
+    const productRef = collection(
+      doc(db, "stores", params.storeId),
+      "products"
+    );
+
+    let productQuery;
+    let queryContraints = [];
+
+    if (searchParams.has("size")) {
+      queryContraints.push(where("size", "==", searchParams.get("size")));
+    }
+    if (searchParams.has("category")) {
+      queryContraints.push(
+        where("category", "==", searchParams.get("category"))
+      );
+    }
+    if (searchParams.has("kitchen")) {
+      queryContraints.push(where("kitchen", "==", searchParams.get("kitchen")));
+    }
+    if (searchParams.has("cuisine")) {
+      queryContraints.push(where("cuisine", "==", searchParams.get("cuisine")));
+    }
+    if (searchParams.has("isFeatured")) {
+      queryContraints.push(
+        where(
+          "isFeatured",
+          "==",
+          searchParams.get("isFeatured") === "true" ? true : false
+        )
+      );
+    }
+
+    if (queryContraints.length > 0) {
+      productQuery = query(productRef, and(...queryContraints));
+    } else {
+      productQuery = query(productRef);
+    }
+
+    const querySnapshot = await getDocs(productQuery);
+    const productData = querySnapshot.docs.map((doc) =>
+      doc.data()
+    ) as Product[];
     return NextResponse.json(productData);
   } catch (error) {
     console.log(`PRODUCTS_POST: ${error}`);
