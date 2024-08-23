@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Size } from "@/type-db";
+import { Order } from "@/type-db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Trash } from "lucide-react";
@@ -23,8 +23,8 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
-interface SizeFormProps {
-  initialData: Size;
+interface OrderFormProps {
+  initialData: Order;
 }
 
 const formSchema = z.object({
@@ -32,10 +32,9 @@ const formSchema = z.object({
   value: z.string().min(1),
 });
 
-const SizeForm = ({ initialData }: SizeFormProps) => {
+const OrderForm = ({ initialData }: OrderFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -43,10 +42,10 @@ const SizeForm = ({ initialData }: SizeFormProps) => {
   const params = useParams();
   const router = useRouter();
 
-  const title = initialData ? "Edit Size" : "Create Size";
-  const description = initialData ? "Edit a Size" : "Add a new Size";
-  const toastMessage = initialData ? "Size Updated" : " Size Created";
-  const action = initialData ? "Save Changes" : "Create Size";
+  const title = initialData ? "Edit Order" : "Create Order";
+  const description = initialData ? "Edit a Order" : "Add a new Order";
+  const toastMessage = initialData ? "Order Updated" : " Order Created";
+  const action = initialData ? "Save Changes" : "Create Order";
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
@@ -54,15 +53,15 @@ const SizeForm = ({ initialData }: SizeFormProps) => {
 
       if (initialData) {
         await axios.patch(
-          `/api/${params.storeId}/sizes/${params.sizeId}`,
+          `/api/${params.storeId}/orders/${params.orderId}`,
           data
         );
       } else {
-        await axios.post(`/api/${params.storeId}/sizes`, data);
+        await axios.post(`/api/${params.storeId}/orders`, data);
       }
       toast.success(toastMessage);
       router.refresh();
-      router.push(`/${params.storeId}/sizes`);
+      router.push(`/${params.storeId}/orders`);
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
@@ -74,11 +73,11 @@ const SizeForm = ({ initialData }: SizeFormProps) => {
     try {
       setIsLoading(true);
 
-      await axios.delete(`/api/${params.storeId}/sizes/${params.categoryId}`);
+      await axios.delete(`/api/${params.storeId}/orders/${params.categoryId}`);
 
-      toast.success("Size Removed");
+      toast.success("Order Removed");
       location.reload();
-      router.push(`/${params.storeId}/sizes`);
+      router.push(`/${params.storeId}/orders`);
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
@@ -126,7 +125,7 @@ const SizeForm = ({ initialData }: SizeFormProps) => {
                   <FormControl>
                     <Input
                       disabled={isLoading}
-                      placeholder="Your size name..."
+                      placeholder="Your order name..."
                       {...field}
                     />
                   </FormControl>
@@ -143,7 +142,7 @@ const SizeForm = ({ initialData }: SizeFormProps) => {
                   <FormControl>
                     <Input
                       disabled={isLoading}
-                      placeholder="Your size value..."
+                      placeholder="Your order value..."
                       {...field}
                     />
                   </FormControl>
@@ -162,4 +161,4 @@ const SizeForm = ({ initialData }: SizeFormProps) => {
   );
 };
 
-export default SizeForm;
+export default OrderForm;
