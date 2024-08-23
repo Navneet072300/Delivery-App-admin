@@ -1,24 +1,24 @@
 import { db } from "@/lib/firebase";
-import { Size } from "@/type-db";
+import { Order } from "@/type-db";
 import { doc, getDoc } from "firebase/firestore";
-import SizeForm from "./_components/size-form";
+import OrderForm from "./_components/order-form";
 
-const SizePage = async ({
+const OrderPage = async ({
   params,
 }: {
-  params: { sizeId: string; storeId: string };
+  params: { orderId: string; storeId: string };
 }) => {
-  const size = (
-    await getDoc(doc(db, "stores", params.storeId, "sizes", params.sizeId))
-  ).data() as Size;
+  const order = (
+    await getDoc(doc(db, "orders", params.orderId, "orders", params.orderId))
+  ).data() as Order;
 
   return (
     <div className=" flex-col">
       <div className=" flex-1 space-y-4 p-8 pt-6">
-        <SizeForm initialData={size} />
+        <OrderForm initialData={order} />
       </div>
     </div>
   );
 };
 
-export default SizePage;
+export default OrderPage;
